@@ -81,7 +81,7 @@ func (s *Scanner) unread() {
 }
 
 // scanWhitespace will consume any whitespace or tab rune until
-// a different rune is found and return WS token and its value.
+// a different rune is found and return 'WS' token and its value.
 func (s *Scanner) scanWhitespace() (Token, string) {
 	s.clearBuffer()
 	s.b.WriteRune(s.read())
@@ -102,7 +102,7 @@ func (s *Scanner) scanWhitespace() (Token, string) {
 }
 
 // scanInteger will consume any integer rune until
-// a different rune is found and return INTEGER token and its value.
+// a different rune is found and return 'INTEGER' token and its value.
 func (s *Scanner) scanInteger() (Token, string) {
 	s.clearBuffer()
 	s.b.WriteRune(s.read())
