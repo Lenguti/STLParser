@@ -17,6 +17,27 @@ func (s Solid) SurfaceArea() float64 {
 	return surfaceArea
 }
 
+func (s Solid) BoundingBox() (Vector, Vector) {
+	var (
+		minX, minY, minZ = math.Inf(1), math.Inf(1), math.Inf(1)
+		maxX, maxY, maxZ = math.Inf(-1), math.Inf(-1), math.Inf(-1)
+	)
+	for i := 0; i < len(s.Facets); i++ {
+		var (
+			vs         = s.Facets[i].Vertices
+			p1, p2, p3 = vs[0], vs[1], vs[2]
+		)
+		minX = min(min(minX, p1.X), min(p2.X, p3.X))
+		minY = min(min(minY, p1.Y), min(p2.Y, p3.Y))
+		minZ = min(min(minZ, p1.Z), min(p3.Z, p3.Z))
+		maxX = max(max(maxX, p1.X), max(p2.X, p3.X))
+		maxY = max(max(maxY, p1.Y), max(p2.Y, p3.Y))
+		maxZ = max(max(maxZ, p1.Z), max(p2.Z, p3.Z))
+	}
+
+	return Vector{X: minX, Y: minY, Z: minZ}, Vector{X: maxX, Y: maxY, Z: maxZ}
+}
+
 type Facet struct {
 	Normal   Vector
 	Vertices []Vector
@@ -57,4 +78,18 @@ func NewFacet() Facet {
 
 type Vector struct {
 	X, Y, Z float64
+}
+
+func min(a, b float64) float64 {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b float64) float64 {
+	if a > b {
+		return a
+	}
+	return b
 }

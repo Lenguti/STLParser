@@ -26,8 +26,8 @@ func main() {
 		log.Fatalf("main: unable to parse file [%s]", err)
 	}
 
-	fmt.Println("PARSED SOLID")
-	fmt.Println(s)
-	fmt.Printf("SOLID HAS %d Triangles\n", len(s.Facets))
-	fmt.Printf("SOLID SURFACE AREA: [%f]\n", s.SurfaceArea())
+	min, max := s.BoundingBox()
+	fmt.Printf("Number of triangles: %d\n", len(s.Facets))
+	fmt.Printf("Surface area       : %f\n", s.SurfaceArea())
+	fmt.Printf("Bounding box       : %+v %+v\n", min, max)
 }
