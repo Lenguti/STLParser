@@ -18,9 +18,7 @@ run    :
 	@./$(BINARY_PATH)/$(BINARY_NAME) $(FILE)
 
 .PHONY       : docker-build
-docker-build : GOOS   = linux
-docker-build : GOARCH = amd64
-docker-build : build
+docker-build :
 	@docker build -t $(BINARY_NAME):latest .
 	
 .PHONY     : docker-run
