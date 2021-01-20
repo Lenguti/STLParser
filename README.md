@@ -13,9 +13,15 @@ make docker-build
 ```
 
 ## Usage
-If you would like to parse an STL file, place the file inside the `files` directory. You can run the parser with go or with docker as such.
+
+This parser will parse the contents of an STL file and output how many triangles, the surface area, and the bounding box of your object.
+If you would like to parse an stl file, place the file inside the `files` directory. you can run the parser with go or with docker as such.
 ```bash
-FILE=files/sample.stl make run
+file=files/sample.stl make run
 or
-FILE=files/sample.stl make docker-run
+file=files/sample.stl make docker-run
 ```
+
+## Design/Improvements
+
+For the design of the parser I decided to create Token identifiers of what is pertinent to the contents of an STL file. The Lexer reads the file per byte and determines the tokenzation. The Parser consumes the Tokens and determines if we have a valid sequence of tokens for an STL file and is in charge of building our object from the data values of the tokens. Once we have built our object from the contents I created helper methods to calculate how many triangles, surface area, and bounding box. With the current design file is being loaded in memory, we would need about 2MB for each million of triangles. I am doing deffered calculations once the whole file has been parsed. Improvements that can be made is do calculations onces each triangle has been parsed. Also, instead of loading the file into memory we can stream the contents of the file and parse/calculate chunk by chunk. I think those two improvements could give a potentially unlimited threshhold of triangles to compute.
