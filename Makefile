@@ -7,7 +7,7 @@ GO_BUILD_PATH ?= .
 
 .PHONY : test
 test   :
-	@go test -v ./... --cover
+	@go test ./... --cover -tags=unit
 
 .PHONY : build
 build  :

@@ -8,8 +8,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+type scanner interface {
+	Scan() (lexer.Token, string)
+}
+
+// Parser represnts our main parsing object for reading contents of an STL file.
 type Parser struct {
-	s *lexer.Scanner
+	s scanner
 	b struct {
 		tok lexer.Token // Last read token.
 		val string      // Last read value.
@@ -17,12 +22,17 @@ type Parser struct {
 	}
 }
 
+// New Returns a pointer to a 'Parser' with an
+// instantiated 'lexer.Scanner'.
 func New(r io.Reader) *Parser {
 	return &Parser{
 		s: lexer.NewScanner(r),
 	}
 }
 
+// parseVector will parse a vector of the form:
+// '0 0 0' representing the X, Y, and Z of a vector.
+// Will return an error if more than 3 points are found.
 func (p *Parser) parseVector() (Vector, error) {
 	var (
 		v      Vector
@@ -54,6 +64,9 @@ func (p *Parser) parseVector() (Vector, error) {
 	return v, nil
 }
 
+// parseVertices will parse vertices of the form:
+// 'vertex 0 0 0' representing the 3 vertices of a triangle.
+// Will return an error if more than 3 vertices are found.
 func (p *Parser) parseVertices() ([]Vector, error) {
 	var (
 		i  int
@@ -86,6 +99,15 @@ func (p *Parser) parseVertices() ([]Vector, error) {
 	return vs, nil
 }
 
+// parseFacet will parse a facet of the form:
+// 'facet normal 0 0 0
+//   outer loop
+//     vertex 0 0 0
+//     vertex 0 1 1
+//     vertex 1 1 1
+//   endloop
+// endfacet'
+// Representing a triangle and its given normal and vertices.
 func (p *Parser) parseFacet() (Facet, error) {
 	f := NewFacet()
 	tok, val := p.scanIgnoreWhitespace()
@@ -148,6 +170,9 @@ func (p *Parser) parseFacet() (Facet, error) {
 	return f, nil
 }
 
+// Parse is our main entry point into parsing an STL file.
+// Parse will read and evaluate tokens to build and determine
+// a proper STL object.
 func (p *Parser) Parse() (Solid, error) {
 	var s Solid
 	tok, val := p.scanIgnoreWhitespace()

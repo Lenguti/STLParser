@@ -4,11 +4,13 @@ import (
 	"math"
 )
 
+// Solid represents the main object represented by the STL file.
 type Solid struct {
 	Name   string
 	Facets []Facet
 }
 
+// SurfaceArea will calculate and return the total surface area of the solid.
 func (s Solid) SurfaceArea() float64 {
 	var surfaceArea float64
 	for i := 0; i < len(s.Facets); i++ {
@@ -17,6 +19,8 @@ func (s Solid) SurfaceArea() float64 {
 	return surfaceArea
 }
 
+// BoundingBox will calculate and return the min and max vertices
+// representing the bounding box of the solid.
 func (s Solid) BoundingBox() (Vector, Vector) {
 	var (
 		minX, minY, minZ = math.Inf(1), math.Inf(1), math.Inf(1)
@@ -38,11 +42,14 @@ func (s Solid) BoundingBox() (Vector, Vector) {
 	return Vector{X: minX, Y: minY, Z: minZ}, Vector{X: maxX, Y: maxY, Z: maxZ}
 }
 
+// Facet represents a component of the solid, with a normal and vertices.
+// Represented as a triangle.
 type Facet struct {
 	Normal   Vector
 	Vertices []Vector
 }
 
+// Area will calculate and return the area of the facet.
 func (f Facet) Area() float64 {
 	if len(f.Vertices) != 3 {
 		return 0
@@ -70,16 +77,20 @@ func (f Facet) Area() float64 {
 	return .5 * math.Sqrt(cp.X*cp.X+cp.Y*cp.Y+cp.Z*cp.Z)
 }
 
+// NewFacet will create a 'Facet' with instantiated vertices of length 3
+// representing the three points of a triangle.
 func NewFacet() Facet {
 	return Facet{
 		Vertices: make([]Vector, 3),
 	}
 }
 
+// Vector represents a point in 3d space with an X, Y, and Z component.
 type Vector struct {
 	X, Y, Z float64
 }
 
+// min will calculate and return the min of two given values.
 func min(a, b float64) float64 {
 	if a < b {
 		return a
@@ -87,6 +98,7 @@ func min(a, b float64) float64 {
 	return b
 }
 
+// max will calculate and return the max of two given values.
 func max(a, b float64) float64 {
 	if a > b {
 		return a

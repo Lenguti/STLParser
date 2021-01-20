@@ -19,6 +19,8 @@ type Scanner struct {
 	b *bytes.Buffer
 }
 
+// NewScanner returns a pointer to a 'Scanner' with an instantiated
+// reader and buffer.
 func NewScanner(r io.Reader) *Scanner {
 	return &Scanner{
 		r: bufio.NewReader(r),
