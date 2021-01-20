@@ -1,17 +1,14 @@
-GOOS          ?= darwin
-GOARCH        ?= amd64
-CGO_ENABLED   ?= 0
 BINARY_PATH   ?= bin
 BINARY_NAME   ?= parser
 GO_BUILD_PATH ?= .
 
 .PHONY : test
 test   :
-	@go test ./... --cover -tags=unit
+	@go test ./... --cover
 
 .PHONY : build
 build  :
-	@GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLEDLED) go build -o $(BINARY_PATH)/$(BINARY_NAME) $(GO_BUILD_PATH)
+	@go build -o $(BINARY_PATH)/$(BINARY_NAME) $(GO_BUILD_PATH)
 
 .PHONY : run
 run    :
