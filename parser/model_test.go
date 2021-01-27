@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"gopkg.in/go-playground/assert.v1"
 )
 
 func TestSurfaceArea(t *testing.T) {
@@ -118,4 +119,85 @@ func TestArea(t *testing.T) {
 
 	// Assert
 	require.Equal(t, expected, out)
+}
+
+func TestToHash(t *testing.T) {
+	// Arrange
+	var (
+		f = Facet{
+			Vertices: []Vector{
+				{X: 0, Y: 1, Z: 2},
+				{X: 0, Y: 1, Z: 2},
+				{X: 0, Y: 1, Z: 2},
+			},
+		}
+		expected = "0.01.02.0:0.01.02.0:0.01.02.0"
+	)
+
+	// Assert
+	h := f.toHash()
+
+	// Act
+	assert.Equal(t, expected, h)
+}
+
+func TestCheckDuplicates(t *testing.T) {
+	// Arrange
+	tcs := map[string]struct {
+		solid    Solid
+		expected bool
+	}{
+		"with duplicate scenario": {
+			solid: Solid{
+				Facets: []Facet{
+					{
+						Vertices: []Vector{
+							{X: 1, Y: 2, Z: 3},
+							{X: 4, Y: 5, Z: 6},
+							{X: 7, Y: 8, Z: 9},
+						},
+					},
+					{
+						Vertices: []Vector{
+							{X: 1, Y: 2, Z: 3},
+							{X: 4, Y: 5, Z: 6},
+							{X: 7, Y: 8, Z: 9},
+						},
+					},
+				},
+			},
+			expected: true,
+		},
+		"without duplicate scenario": {
+			solid: Solid{
+				Facets: []Facet{
+					{
+						Vertices: []Vector{
+							{X: 1, Y: 2, Z: 3},
+							{X: 4, Y: 5, Z: 6},
+							{X: 7, Y: 8, Z: 9},
+						},
+					},
+					{
+						Vertices: []Vector{
+							{X: 1, Y: 1, Z: 3},
+							{X: 4, Y: 5, Z: 6},
+							{X: 7, Y: 8, Z: 9},
+						},
+					},
+				},
+			},
+			expected: false,
+		},
+	}
+
+	for name, tc := range tcs {
+		t.Run(name, func(t *testing.T) {
+			// Act
+			hasDuplicates := tc.solid.CheckDuplicates()
+
+			// Assert
+			assert.Equal(t, tc.expected, hasDuplicates)
+		})
+	}
 }

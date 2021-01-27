@@ -26,8 +26,19 @@ func main() {
 		log.Fatalf("main: unable to parse file [%s]", err)
 	}
 
+	if s.CheckDuplicates() {
+		log.Fatalf("main: stl file has duplicate triangles")
+	}
+
 	min, max := s.BoundingBox()
 	fmt.Printf("Number of triangles: %d\n", len(s.Facets))
 	fmt.Printf("Surface area       : %f\n", s.SurfaceArea())
 	fmt.Printf("Bounding box       : %+v %+v\n", min, max)
 }
+
+/*
+	We want a new feature to return an error when we receive any duplicated triangles.
+
+	- After parsing the file we can check and see if any triangles are duplicated from
+	  going over the solids triangles.
+*/

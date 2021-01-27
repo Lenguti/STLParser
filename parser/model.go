@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"fmt"
 	"math"
+	"strings"
 )
 
 // Solid represents the main object represented by the STL file.
@@ -17,6 +19,63 @@ func (s Solid) SurfaceArea() float64 {
 		surfaceArea += s.Facets[i].Area()
 	}
 	return surfaceArea
+}
+
+/*
+	solid{
+		Triangles: []Triangle{
+			{
+				v: a b c
+			},
+			{
+				v: a b c
+			},
+		},
+	}
+
+	hasDuplicates := solid.CheckDuplicates() bool
+	if hasDuplicates {
+		return error
+	}
+*/
+
+/*
+	Solid{
+		Facets: []Facet{
+			{
+				Vertices: []Vertex{
+					{
+						{X: 1, y: 1, Z: 1},
+						{X: 2, y: 2, Z: 2},
+						{X: 3, y: 3 Z: 3},
+					}
+					"111:222:333"
+				},
+			},
+			{
+				Vertices: []Vertex{
+					{
+						{X: 1, y: 1, Z: 1},
+						{X: 1, y: 1, Z: 1},
+						{X: 1, y: 1, Z: 1},
+					}
+				},
+			},
+		},
+	}
+*/
+func (s Solid) CheckDuplicates() bool {
+	duplicatesMap := map[string]bool{}
+	for i := 0; i < len(s.Facets); i++ {
+		f := s.Facets[i]
+		facetHash := f.toHash()
+		if _, ok := duplicatesMap[facetHash]; ok {
+			return true
+		} else {
+			duplicatesMap[facetHash] = true
+		}
+	}
+	return false
 }
 
 // BoundingBox will calculate and return the min and max vertices
@@ -47,6 +106,18 @@ func (s Solid) BoundingBox() (Vector, Vector) {
 type Facet struct {
 	Normal   Vector
 	Vertices []Vector
+}
+
+// toHash will convert the facets vertices into a single string
+// seperated by ':'.
+func (f Facet) toHash() string {
+	var hash string
+	for i := 0; i < len(f.Vertices); i++ {
+		v := f.Vertices[i]
+		hash += fmt.Sprintf("%.1f%.1f%.1f:", v.X, v.Y, v.Z)
+	}
+
+	return strings.TrimSuffix(hash, ":")
 }
 
 // Area will calculate and return the area of the facet.
